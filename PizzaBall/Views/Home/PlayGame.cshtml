@@ -1,0 +1,37 @@
+﻿@model PizzaBall.Controllers.GameInstance
+
+@{
+    ViewBag.Title = "PlayGame";
+}
+
+<h3>@Model.NumberOfPlayers Players</h3>
+
+<div>Player @(Model.CurrentPlayerTurn)'s turn</div>
+
+<div class="alert-info">Click a square to play</div>
+<table class="table-bordered table-striped table">
+    @foreach(int i in Model.GameGrid.BoardRows.Keys)
+    {
+        <tr>
+            @foreach(PizzaBall.Controllers.BoardSlot b in Model.GameGrid.BoardRows[i])
+            {
+                <td align="center">
+                    <div id="coordinate_@(i)_@(b.Yvalue)">
+                        @if (b.Occupied()){
+                            <div>@b.CardInfo.Description</div>
+                            <div><img src="@b.CardInfo.MainImage" class="img-circle" /></div>
+                            foreach(var resource in b.CardInfo.Resources)
+                            {
+                                <div>@resource.Key : @resource.Value</div>
+                            }
+                            <div>Owned by @b.CardInfo.Owner</div>
+                        }
+                        else{
+                            <div>Click to Play Here</div>
+                        }
+                    </div>
+                </td>
+            }
+        </tr>
+    }
+</table>
