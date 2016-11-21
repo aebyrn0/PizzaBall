@@ -1,4 +1,6 @@
-﻿@{
+﻿@model GameInstance
+
+@{
     ViewBag.Title = "Game Time";
 }
 
@@ -8,7 +10,7 @@
         <h1>Time for a Pizza Ball!</h1>
         <p class="lead">How many players?</p>
         <p>
-            <input type="text" name="numOfPlayers" value="2" />&nbsp;
+            <input type="text" name="numOfPlayers" value="@Model.NumberOfPlayers" />&nbsp;
             <input type="submit" id="btnStartGame" value="Let's Play!" class="btn-info" />
         </p>
     </div>

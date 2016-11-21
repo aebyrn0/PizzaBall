@@ -1,4 +1,4 @@
-﻿@model PizzaBall.Controllers.GameInstance
+﻿@model GameInstance
 
 @{
     ViewBag.Title = "PlayGame";
@@ -6,32 +6,59 @@
 
 <h3>@Model.NumberOfPlayers Players</h3>
 
-<div>Player @(Model.CurrentPlayerTurn)'s turn</div>
-
+<div class="alert-warning">Player @(Model.CurrentPlayerTurn)'s turn</div>
 <div class="alert-info">Click a square to play</div>
-<table class="table-bordered table-striped table">
-    @foreach(int i in Model.GameGrid.BoardRows.Keys)
+
+@using (Html.BeginForm("PlayerAction", "Home", FormMethod.Post, new { id = "frmPlayerAction" }))
+{ 
+    <table class="table-bordered table-striped table">
+    @foreach (int i in Model.GameGrid.BoardRows.Keys)
     {
         <tr>
-            @foreach(PizzaBall.Controllers.BoardSlot b in Model.GameGrid.BoardRows[i])
+            @foreach (BoardSlot b in Model.GameGrid.BoardRows[i])
             {
                 <td align="center">
                     <div id="coordinate_@(i)_@(b.Yvalue)">
-                        @if (b.Occupied()){
-                            <div>@b.CardInfo.Description</div>
+                        @if (b.Occupied())
+                        {
+                            @*<div>@b.CardInfo.Description</div>
                             <div><img src="@b.CardInfo.MainImage" class="img-circle" /></div>
-                            foreach(var resource in b.CardInfo.Resources)
+                            foreach (var resource in b.CardInfo.Resources)
                             {
                                 <div>@resource.Key : @resource.Value</div>
                             }
-                            <div>Owned by @b.CardInfo.Owner</div>
+                            <div>Owned by @b.CardInfo.Owner</div>*@
                         }
-                        else{
-                            <div>Click to Play Here</div>
+                        else
+                        {
+                            <div class="squareClicked" data-x="@(i)" data-y="@(b.Yvalue)">Click to Play Here</div>
                         }
                     </div>
                 </td>
             }
         </tr>
     }
-</table>
+    </table>
+
+    <input type="submit" style="display: none;" />
+    <input type="hidden" id="gridXvalue" name="gridXvalue" value="" />
+    <input type="hidden" id="gridYvalue" name="gridYvalue" value="" />
+}
+
+@section scripts
+{
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $(".squareClicked").click(function () {
+            var x_value = $(this).data('x');
+            var y_value = $(this).data('y');
+
+            $('#gridXvalue').val(x_value);
+            $('#gridYvalue').val(y_value);
+
+            $("#frmPlayerAction").submit();
+        });
+    });
+</script>
+}
