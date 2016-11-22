@@ -21,13 +21,10 @@
                     <div id="coordinate_@(i)_@(b.Yvalue)">
                         @if (b.Occupied())
                         {
-                            @*<div>@b.CardInfo.Description</div>
-                            <div><img src="@b.CardInfo.MainImage" class="img-circle" /></div>
-                            foreach (var resource in b.CardInfo.Resources)
-                            {
-                                <div>@resource.Key : @resource.Value</div>
-                            }
-                            <div>Owned by @b.CardInfo.Owner</div>*@
+                            <div style="float:right;">@b.CardInfo.CardNumber</div>
+                            <div style="align-content:center;">@b.CardInfo.CardResource</div>
+                            <div style="float: left;">@b.CardInfo.CardNumber</div>
+                            @*<div><img src="@b.CardInfo.CardResourceImage" class="img-circle" /></div>*@
                         }
                         else
                         {
@@ -38,6 +35,20 @@
             }
         </tr>
     }
+    </table>
+
+    <h3>Player @(Model.CurrentPlayerTurn)'s Cards:</h3>
+    <table class="table-bordered table-striped table">
+        <tr>
+            @foreach (PuzzleCard c in Model.Players[Model.CurrentPlayerTurn].Hand)
+            {
+                <td>
+                    <div>Card Id: @c.CardId</div>
+                    <div>Number: @c.CardNumber</div>
+                    <div>Resource: @c.CardResource</div>
+                </td>
+            }
+        </tr>
     </table>
 
     <input type="submit" style="display: none;" />

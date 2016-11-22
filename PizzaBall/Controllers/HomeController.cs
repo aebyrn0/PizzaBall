@@ -25,29 +25,20 @@ namespace PizzaBall.Controllers
 
         public ActionResult Index()
         {
-            if (ModelState.IsValid == false)
-                return View(game);
-
             return View(game);
         }
 
         public ActionResult PlayGame(int numOfPlayers = 2)
         {
-            game.NumberOfPlayers = numOfPlayers;
+            game.InitializeGame(numOfPlayers);
 
             return View(game);
         }
 
         public ActionResult PlayerAction(int gridXvalue, int gridYvalue)
         {
-            var card = new PuzzleCard
-            {
-                //Description = "Test Played Card",
-                //Owner = string.Format("Player {0}", game.CurrentPlayerTurn),
-                //Resources = new Dictionary<string, int>()
-            };
-
-            game.GameGrid.PlayerTakeSquare(gridXvalue, gridYvalue, card);
+            game.PlayerPlayPuzzleCard(gridXvalue, gridYvalue, game.Players[game.CurrentPlayerTurn].Hand[0].CardId);
+            game.PlayerDrawCard(game.CurrentPlayerTurn);
             game.IncrementPlayerTurn();
 
             return View("PlayGame", game);
@@ -58,8 +49,39 @@ namespace PizzaBall.Controllers
     {
         [Range(2, 5)]
         public int NumberOfPlayers { get; set; } = 2;
-        public int CurrentPlayerTurn = 1;
-        public CardGrid GameGrid = new CardGrid();
+        public int CurrentPlayerTurn { get; set; }
+        public CardGrid GameGrid { get; set; }
+        public Dictionary<int, Player> Players { get; set; }
+        public PuzzleCardDeck PuzzleDeck { get; set; }
+        public const int STARTING_PLAYER_PUZZLE_CARDS = 7;
+
+        public void InitializeGame(int numOfPlayers)
+        {
+            NumberOfPlayers = numOfPlayers;
+            CurrentPlayerTurn = 1;
+
+            //Create Game Grid
+            GameGrid = new CardGrid();
+
+            //Build deck
+            PuzzleDeck = new PuzzleCardDeck();
+            PuzzleDeck.InitializeDeck();
+
+            //Create correct number of players
+            Players = new Dictionary<int, Player>();
+
+            for (int ct = 1; ct <= NumberOfPlayers; ct++)
+            {
+                //Initialize player
+                Players.Add(ct, new Player());
+
+                //Initialize player hand
+                Players[ct].Hand = new List<PuzzleCard>();
+
+                //Deal player hand
+                DealPlayerStartingHand(Players[ct]);
+            }
+        }
 
         public void IncrementPlayerTurn()
         {
@@ -67,6 +89,39 @@ namespace PizzaBall.Controllers
             if (CurrentPlayerTurn > NumberOfPlayers)
                 CurrentPlayerTurn = 1;
         }
+
+        public void DealPlayerStartingHand(Player p)
+        {
+            for(int ct = 1; ct <= STARTING_PLAYER_PUZZLE_CARDS; ct++)
+            {
+                p.Hand.Add(PuzzleDeck.DrawPuzzleCard());
+            }
+        }
+
+        public void PlayerPlayPuzzleCard(int x, int y, int cardId)
+        {
+            var currentPlayer = Players[CurrentPlayerTurn];
+            var cardToPlay = currentPlayer.Hand.Where(c => c.CardId == cardId).First();
+
+            if (cardToPlay == null)
+            {
+                throw new Exception(string.Format("Card of cardId: {0} not found.", cardId));
+            }
+
+            GameGrid.FillSquareWithCard(x, y, cardToPlay);
+            currentPlayer.Hand.Remove(cardToPlay);
+        }
+
+        public void PlayerDrawCard(int playerId)
+        {
+            Players[playerId].Hand.Add(PuzzleDeck.DrawPuzzleCard());
+        }
+    }
+
+    public class Player
+    {
+        public string Name { get; set; }
+        public List<PuzzleCard> Hand { get; set; }
     }
 
     public class CardGrid
@@ -91,7 +146,7 @@ namespace PizzaBall.Controllers
             }
         }
 
-        public void PlayerTakeSquare(int x, int y, PuzzleCard card)
+        public void FillSquareWithCard(int x, int y, PuzzleCard card)
         {
             BoardRows[x][y].CardInfo = card;
         }
@@ -110,18 +165,20 @@ namespace PizzaBall.Controllers
 
     public class PuzzleCard
     {
+        public int CardId { get; set; }
         public int CardNumber { get; set; }
         public int CardResource { get; set; }
     }
 
     public class PuzzleCardDeck
     {
-        public Dictionary<int, PuzzleCard> Deck { get; set; }
+        public List<PuzzleCard> Deck { get; set; }
         private const int NUM_OF_DUPES = 4;
         private const int TOTAL_GRID_SIZE = 4;
 
-        public PuzzleCardDeck()
+        public void InitializeDeck()
         {
+            Deck = new List<PuzzleCard>();
             var ct = 1;
 
             for (int k = 1; k <= NUM_OF_DUPES; k++)
@@ -130,10 +187,11 @@ namespace PizzaBall.Controllers
                 {
                     for (int j = 1; j <= TOTAL_GRID_SIZE; j++)
                     {
-                        Deck.Add(ct, new PuzzleCard
+                        Deck.Add(new PuzzleCard
                         {
-                            CardNumber = i + 1,
-                            CardResource = j + 1
+                            CardId = ct,
+                            CardNumber = i,
+                            CardResource = j
                         });
 
                         ct++;
@@ -142,9 +200,16 @@ namespace PizzaBall.Controllers
             }
         }
 
-        public void ShuffleDeck()
+        public PuzzleCard DrawPuzzleCard()
         {
+            var drawnCard = new PuzzleCard();
+            Random r = new Random();
+            int rInt = r.Next(1, Deck.Count);
 
+            drawnCard = Deck[rInt];
+            Deck.RemoveAt(rInt);
+
+            return drawnCard;
         }
     }
 }
