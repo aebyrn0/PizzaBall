@@ -18,42 +18,50 @@
             @foreach (BoardSlot b in Model.GameGrid.BoardRows[i])
             {
                 <td align="center">
-                    <div id="coordinate_@(i)_@(b.Yvalue)">
-                        @if (b.Occupied())
-                        {
-                            <div style="float:right;">@b.CardInfo.CardNumber</div>
-                            <div style="align-content:center;">@b.CardInfo.CardResource</div>
-                            <div style="float: left;">@b.CardInfo.CardNumber</div>
-                            @*<div><img src="@b.CardInfo.CardResourceImage" class="img-circle" /></div>*@
-                        }
-                        else
-                        {
-                            <div class="squareClicked" data-x="@(i)" data-y="@(b.Yvalue)">Click to Play Here</div>
-                        }
-                    </div>
+                    @if (b.Occupied())
+                    {
+                        @Html.Partial("_DisplayPuzzleCard", b.CardInfo)
+                    }
+                    else
+                    {
+                        <div class="squareClicked" data-x="@(i)" data-y="@(b.Yvalue)">Click a Card, then click here</div>
+                    }
                 </td>
             }
         </tr>
     }
     </table>
 
-    <h3>Player @(Model.CurrentPlayerTurn)'s Cards:</h3>
+    foreach (var player in Model.Players)
+    {
+    <h3>Player @(player.Key)'s Cards:</h3>
     <table class="table-bordered table-striped table">
         <tr>
-            @foreach (PuzzleCard c in Model.Players[Model.CurrentPlayerTurn].Hand)
+            @foreach (PuzzleCard c in player.Value.Hand)
             {
                 <td>
-                    <div>Card Id: @c.CardId</div>
-                    <div>Number: @c.CardNumber</div>
-                    <div>Resource: @c.CardResource</div>
+                    @Html.Partial("_DisplayPuzzleCard", c)
                 </td>
             }
         </tr>
     </table>
+    }
 
-    <input type="submit" style="display: none;" />
+    <h3>Remaining Deck:</h3>
+    <table class="table-bordered table-striped table">
+        @foreach (PuzzleCard c in Model.PuzzleDeck.Deck)
+        {
+            <tr>
+                <td>
+                    @Html.Partial("_DisplayPuzzleCard", c)
+                </td>
+            </tr>
+        }
+    </table>
+
     <input type="hidden" id="gridXvalue" name="gridXvalue" value="" />
     <input type="hidden" id="gridYvalue" name="gridYvalue" value="" />
+    <input type="hidden" id="playCardId" name="playCardId" value="" />
 }
 
 @section scripts
@@ -61,7 +69,20 @@
 <script type="text/javascript">
     $(document).ready(function () {
 
+        $(".playerCard").click(function () {
+            $(this).addClass('alert-danger');
+
+            var cardId = $(this).data('cardid');
+            $('#playCardId').val(cardId);
+        });
+
         $(".squareClicked").click(function () {
+
+            if (!$('#playCardId').val()) {
+                alert('Please select a card to play.')
+                return;
+            }
+
             var x_value = $(this).data('x');
             var y_value = $(this).data('y');
 

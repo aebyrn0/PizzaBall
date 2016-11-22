@@ -35,9 +35,9 @@ namespace PizzaBall.Controllers
             return View(game);
         }
 
-        public ActionResult PlayerAction(int gridXvalue, int gridYvalue)
+        public ActionResult PlayerAction(int gridXvalue, int gridYvalue, int playCardId)
         {
-            game.PlayerPlayPuzzleCard(gridXvalue, gridYvalue, game.Players[game.CurrentPlayerTurn].Hand[0].CardId);
+            game.PlayerPlayPuzzleCard(gridXvalue, gridYvalue, playCardId);
             game.PlayerDrawCard(game.CurrentPlayerTurn);
             game.IncrementPlayerTurn();
 
@@ -101,7 +101,7 @@ namespace PizzaBall.Controllers
         public void PlayerPlayPuzzleCard(int x, int y, int cardId)
         {
             var currentPlayer = Players[CurrentPlayerTurn];
-            var cardToPlay = currentPlayer.Hand.Where(c => c.CardId == cardId).First();
+            var cardToPlay = currentPlayer.Hand.Where(c => c.CardId == cardId).FirstOrDefault();
 
             if (cardToPlay == null)
             {
@@ -208,7 +208,7 @@ namespace PizzaBall.Controllers
 
             drawnCard = Deck[rInt];
             Deck.RemoveAt(rInt);
-
+            System.Threading.Thread.Sleep(100);
             return drawnCard;
         }
     }
