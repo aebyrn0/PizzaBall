@@ -183,10 +183,14 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\BoardSlot.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
-    <Compile Include="Controllers\PuzzleCard.cs" />
+    <Compile Include="Models\GameClasses\GameInstance.cs" />
+    <Compile Include="Models\GameClasses\LandCardDeck.cs" />
+    <Compile Include="Models\GameClasses\LandGrid.cs" />
+    <Compile Include="Models\GameClasses\LandSlot.cs" />
+    <Compile Include="Models\GameClasses\Player.cs" />
+    <Compile Include="Models\GameClasses\LandCard.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

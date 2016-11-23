@@ -1,4 +1,5 @@
-﻿@model GameInstance
+﻿@using PizzaBall.Models.GameClasses
+@model GameInstance
 
 @{
     ViewBag.Title = "PlayGame";
@@ -15,7 +16,7 @@
     @foreach (int i in Model.GameGrid.BoardRows.Keys)
     {
         <tr>
-            @foreach (BoardSlot b in Model.GameGrid.BoardRows[i])
+            @foreach (LandSlot b in Model.GameGrid.BoardRows[i])
             {
                 <td align="center">
                     @if (b.Occupied())
@@ -32,7 +33,19 @@
     }
     </table>
 
-    foreach (var player in Model.Players)
+    <h3>Player @(Model.CurrentPlayerTurn)'s Cards:</h3>
+    <table class="table-bordered table-striped table">
+        <tr>
+            @foreach (LandCard c in Model.Players[Model.CurrentPlayerTurn].Hand)
+            {
+                <td>
+                    @Html.Partial("_DisplayPuzzleCard", c)
+                </td>
+            }
+        </tr>
+    </table>
+
+    @*foreach (var player in Model.Players)
     {
     <h3>Player @(player.Key)'s Cards:</h3>
     <table class="table-bordered table-striped table">
@@ -45,9 +58,9 @@
             }
         </tr>
     </table>
-    }
+    }*@
 
-    <h3>Remaining Deck:</h3>
+    @*<h3>Remaining Deck:</h3>
     <table class="table-bordered table-striped table">
         @foreach (PuzzleCard c in Model.PuzzleDeck.Deck)
         {
@@ -57,7 +70,7 @@
                 </td>
             </tr>
         }
-    </table>
+    </table>*@
 
     <input type="hidden" id="gridXvalue" name="gridXvalue" value="" />
     <input type="hidden" id="gridYvalue" name="gridYvalue" value="" />
