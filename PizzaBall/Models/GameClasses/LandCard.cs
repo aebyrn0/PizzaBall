@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace PizzaBall.Models.GameClasses
+﻿namespace PizzaBall.Models.GameClasses
 {
     public class LandCard
     {
