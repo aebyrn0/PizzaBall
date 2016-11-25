@@ -5,8 +5,8 @@ namespace PizzaBall.Models.GameClasses
     public class LandGrid
     {
         public SortedDictionary<int, List<LandSlot>> BoardRows { get; set; }
-        private const int BOARD_HEIGHT = 4;
-        private const int BOARD_WIDTH = 4;
+        private const int BOARD_HEIGHT = 7;
+        private const int BOARD_WIDTH = 7;
 
         public LandGrid()
         {

@@ -1,0 +1,31 @@
+﻿<div id="@Model.CardId" class="playerCard" data-cardId="@Model.CardId" style="width:100%;">
+    @*<div>Card Id: @Model.CardId</div>*@
+    <div style="text-align: right; height: 20px;">
+        @Html.Partial("_DisplayCardNumber")
+    </div>
+    <br />
+    <div style="text-align: center; height: 100px;">
+        @if (Model.CardResource == 1) {
+            <img src="~/Content/Images/Food.png" class="img-circle" width="120" />
+        }
+        else if (Model.CardResource == 2)
+        {
+            <img src="~/Content/Images/Gold.jpg" class="img-circle" width="120" />
+        }
+        else if (Model.CardResource == 3)
+        {
+            <img src="~/Content/Images/Stone.jpg" class="img-circle" width="120" />
+        }
+        else if (Model.CardResource == 4)
+        {
+            <img src="~/Content/Images/Wood.jpg" class="img-circle" width="120" />
+        }
+        else if (Model.CardResource == 5)
+        {
+            <img src="~/Content/Images/Coal.jpg" class="img-circle" width="120" />
+        }
+    </div>
+    <div style="text-align: left; height: 50px;">
+        @Html.Partial("_DisplayCardNumber")
+    </div>
+</div>
