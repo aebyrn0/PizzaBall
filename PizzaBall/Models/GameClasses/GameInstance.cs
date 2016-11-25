@@ -12,10 +12,13 @@ namespace PizzaBall.Models.GameClasses
         public int CurrentPlayerTurn { get; set; }
         public LandGrid GameGrid { get; set; }
         public Dictionary<int, Player> Players { get; set; }
-        public LandCardDeck PuzzleDeck { get; set; }
+        public LandCardDeck LandDeck { get; set; }
+        public PointCardDeck PointDeck { get; set; }
+        public List<PointCard> PointCardsForSale { get; set; }
         public const int STARTING_PLAYER_PUZZLE_CARDS = 7;
+        private int STARTING_POINT_CARDS_FOR_SALE = 8;
 
-        public void InitializeGame(int numOfPlayers)
+        public void InitializeGame(int numOfPlayers, string csvFilePath)
         {
             NumberOfPlayers = numOfPlayers;
             CurrentPlayerTurn = 1;
@@ -23,9 +26,13 @@ namespace PizzaBall.Models.GameClasses
             //Create Game Grid
             GameGrid = new LandGrid();
 
-            //Build deck
-            PuzzleDeck = new LandCardDeck();
-            PuzzleDeck.InitializeDeck();
+            //Build land deck
+            LandDeck = new LandCardDeck();
+            LandDeck.InitializeDeck();
+
+            //Build point card deck
+            PointDeck = new PointCardDeck();
+            PointDeck.InitializeDeck(csvFilePath);
 
             //Create correct number of players
             Players = new Dictionary<int, Player>();
@@ -37,10 +44,21 @@ namespace PizzaBall.Models.GameClasses
 
                 //Initialize player hand
                 Players[ct].Hand = new List<LandCard>();
+                Players[ct].PointCards = new List<PointCard>();
             }
 
-            //Deal player hand
             DealPlayerStartingHand();
+
+            PointCardsForSale = new List<PointCard>();
+            DealPointCardsForSale();
+        }
+
+        private void DealPointCardsForSale()
+        {
+            for (int i = 1; i <= STARTING_POINT_CARDS_FOR_SALE; i++)
+            {
+                PointCardsForSale.Add(PointDeck.DealNonScoutCard());
+            }
         }
 
         public void IncrementPlayerTurn()
@@ -52,12 +70,14 @@ namespace PizzaBall.Models.GameClasses
 
         public void DealPlayerStartingHand()
         {
-            for (int ct = 1; ct <= STARTING_PLAYER_PUZZLE_CARDS; ct++)
+            foreach (Player p in Players.Values)
             {
-                foreach (Player p in Players.Values)
+                for (int ct = 1; ct <= STARTING_PLAYER_PUZZLE_CARDS; ct++)
                 {
-                    p.Hand.Add(PuzzleDeck.DrawPuzzleCard());
+                    LandDeck.DrawPuzzleCard(p);
                 }
+
+                PointDeck.DealScoutCard(p);
             }
         }
 
@@ -77,7 +97,7 @@ namespace PizzaBall.Models.GameClasses
 
         public void PlayerDrawCard(int playerId)
         {
-            Players[playerId].Hand.Add(PuzzleDeck.DrawPuzzleCard());
+            LandDeck.DrawPuzzleCard(Players[playerId]);
         }
     }
 }

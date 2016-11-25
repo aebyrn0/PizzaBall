@@ -6,6 +6,19 @@
 }
 <br />
 
+<h3>Cards for Sale</h3>
+<table class="table-bordered table-striped table" style="margin: 3px;">
+    <tr>
+        @foreach (PointCard c in Model.PointCardsForSale)
+            {
+            <td>
+                @Html.Partial("_DisplayPointCard", c)
+            </td>
+        }
+    </tr>
+</table>
+
+<h3>Game Board</h3>
 @using (Html.BeginForm("PlayerAction", "Home", FormMethod.Post, new { id = "frmPlayerAction" }))
 { 
     <table class="table-bordered table-striped table">
@@ -34,7 +47,7 @@
 
     @Html.Partial("_DisplayPlayerResources", Model.Players[Model.CurrentPlayerTurn])
 
-    <table class="table-bordered table-striped table">
+    <table class="table-bordered table-striped table" style="margin: 3px;">
         <tr>
             @foreach (LandCard c in Model.Players[Model.CurrentPlayerTurn].Hand)
             {
@@ -44,6 +57,19 @@
             }
         </tr>
     </table>
+
+    <h3>Cards Owned</h3>
+        <table class="table-bordered table-striped table" style="margin: 3px;">
+            <tr>
+                @foreach (PointCard c in Model.Players[Model.CurrentPlayerTurn].PointCards)
+                {
+                    <td>
+                        @Html.Partial("_DisplayPointCard", c)
+                    </td>
+                }
+            </tr>
+        </table>
+
 
     <input type="hidden" id="gridXvalue" name="gridXvalue" value="" />
     <input type="hidden" id="gridYvalue" name="gridYvalue" value="" />

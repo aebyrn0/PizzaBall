@@ -1,4 +1,7 @@
 ﻿using PizzaBall.Models.GameClasses;
+using System.IO;
+using System.Reflection;
+using System.Web;
 using System.Web.Mvc;
 
 namespace PizzaBall.Controllers
@@ -26,7 +29,9 @@ namespace PizzaBall.Controllers
 
         public ActionResult PlayGame(int numOfPlayers = 2)
         {
-            game.InitializeGame(numOfPlayers);
+            var filePath = HttpRuntime.AppDomainAppPath + @"Content\GameData\4x4cards.csv";
+
+            game.InitializeGame(numOfPlayers, filePath);
 
             return View(game);
         }

@@ -34,7 +34,7 @@ namespace PizzaBall.Models.GameClasses
             }
         }
 
-        public LandCard DrawPuzzleCard()
+        public void DrawPuzzleCard(Player p)
         {
             var drawnCard = new LandCard();
             Random r = new Random();
@@ -42,8 +42,11 @@ namespace PizzaBall.Models.GameClasses
 
             drawnCard = Deck[rInt];
             Deck.RemoveAt(rInt);
-            System.Threading.Thread.Sleep(100);
-            return drawnCard;
+
+            //Starting hands don't seem very random without this
+            System.Threading.Thread.Sleep(10);
+
+            p.Hand.Add(drawnCard);
         }
     }
 }

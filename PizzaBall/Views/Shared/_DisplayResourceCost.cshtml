@@ -1,0 +1,38 @@
+﻿@if (Model.Food > 0 || Model.Gold > 0 || Model.Wood > 0 || Model.Stone > 0 || Model.Coal > 0)
+{
+    <div style="border: solid; padding: 5px;">
+
+    <b>Cost</b>
+    @if (Model.Food > 0)
+    {
+        <div>
+            <img src="~/Content/Images/Food.png" class="img-circle" width="20" /> @Model.Food
+        </div>
+    }
+    @if (Model.Gold > 0)
+    {
+        <div>
+            <img src="~/Content/Images/Gold.jpg" class="img-circle" width="20" /> @Model.Gold
+        </div>
+    }
+    @if (Model.Wood > 0)
+    {
+        <div>
+            <img src="~/Content/Images/Wood.jpg" class="img-circle" width="20" /> @Model.Wood
+        </div>
+    }
+    @if (Model.Stone > 0)
+    {
+        <div>
+            <img src="~/Content/Images/Stone.jpg" class="img-circle" width="20" /> @Model.Stone
+        </div>
+    }
+    @if (Model.Coal > 0)
+    {
+        <div>
+            <img src="~/Content/Images/coal.jpg" class="img-circle" width="20" /> @Model.Coal
+        </div>
+    }
+
+    </div>
+}
