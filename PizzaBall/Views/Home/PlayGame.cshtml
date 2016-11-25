@@ -6,19 +6,10 @@
 }
 <br />
 
-<h3>Cards for Sale</h3>
-<table class="table-bordered table-striped table" style="margin: 3px;">
-    <tr>
-        @foreach (PointCard c in Model.PointCardsForSale)
-            {
-            <td>
-                @Html.Partial("_DisplayPointCard", c)
-            </td>
-        }
-    </tr>
-</table>
-
 <h3>Game Board</h3>
+
+<h4 style="color: red;">@Model.Message</h4>
+
 @using (Html.BeginForm("PlayerAction", "Home", FormMethod.Post, new { id = "frmPlayerAction" }))
 { 
     <table class="table-bordered table-striped table">
@@ -32,17 +23,21 @@
                     {
                         @Html.Partial("_DisplayLandCard", b.CardInfo)
                     }
-                    else
+                    else if (b.ValidSquare)
                     {
                         <div class="squareClicked" data-x="@(i)" data-y="@(b.Yvalue)">Click a Card, then click here</div>
+                    }
+                    else
+                    {
+                        <div></div>
                     }
                 </td>
             }
         </tr>
-    }
+            }
     </table>
 
-    <input type="submit" class="btn-success" style="float: right;" value="End Turn" />
+    <input id="bEndTurn" type="button" class="btn-success" style="float: right;" value="End Turn" />
     <h3>Player @(Model.CurrentPlayerTurn)'s Turn:</h3> 
 
     @Html.Partial("_DisplayPlayerResources", Model.Players[Model.CurrentPlayerTurn])
@@ -59,27 +54,55 @@
     </table>
 
     <h3>Cards Owned</h3>
-        <table class="table-bordered table-striped table" style="margin: 3px;">
-            <tr>
-                @foreach (PointCard c in Model.Players[Model.CurrentPlayerTurn].PointCards)
-                {
-                    <td>
-                        @Html.Partial("_DisplayPointCard", c)
-                    </td>
-                }
-            </tr>
-        </table>
+    <table class="table-bordered table-striped table" style="margin: 3px;">
+        <tr>
+            @foreach (PointCard c in Model.Players[Model.CurrentPlayerTurn].PointCards)
+            {
+                <td>
+                    @Html.Partial("_DisplayPointCard", c)
+                </td>
+            }
+        </tr>
+    </table>
 
+    <h3>Cards for Sale</h3>
+    <table class="table-bordered table-striped table" style="margin: 3px;">
+        <tr>
+            @foreach (PointCard c in Model.PointCardsForSale)
+            {
+                <td>
+                    @Html.Partial("_DisplayPointCard", c)
+                </td>
+            }
+        </tr>
+    </table>
 
     <input type="hidden" id="gridXvalue" name="gridXvalue" value="" />
     <input type="hidden" id="gridYvalue" name="gridYvalue" value="" />
     <input type="hidden" id="playCardId" name="playCardId" value="" />
+    <input type="hidden" id="buyCardId" name="buyCardId" value="" />
+    <input type="hidden" id="useCardId" name="useCardId" value="" />
+    <input type="hidden" id="action" name="action" value="" />
 }
 
 @section scripts
 {
 <script type="text/javascript">
     $(document).ready(function () {
+
+        $("#bEndTurn").click(function () {
+            $('#action').val('endTurn');
+
+            $("#frmPlayerAction").submit();
+        });
+
+        $(".buyPointCard").click(function () {
+            var cardId = $(this).data('cardid');
+            $('#buyCardId').val(cardId);
+            $('#action').val('buy');
+
+            $("#frmPlayerAction").submit();
+        });
 
         $(".playerCard").click(function () {
             $(this).addClass('alert-danger');
@@ -100,6 +123,7 @@
 
             $('#gridXvalue').val(x_value);
             $('#gridYvalue').val(y_value);
+            $('#action').val('playLandCard');
 
             $("#frmPlayerAction").submit();
         });

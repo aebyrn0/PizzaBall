@@ -7,6 +7,7 @@ namespace PizzaBall.Models.GameClasses
 {
     public class PointCard
     {
+        public int CardId { get; set; }
         public string Name { get; set; }
         public int PointValue { get; set; }
         public string Description { get; set; }
@@ -18,5 +19,8 @@ namespace PizzaBall.Models.GameClasses
         public int Wood { get; set; }
         public int Coal { get; set; }
         public CardUseFreq Frequency { get; set; }
+        public bool PlayerOwned { get; set; }
+        public bool Usable { get; set; } = false;
+        public bool Used { get; set; } = false;
     }
 }

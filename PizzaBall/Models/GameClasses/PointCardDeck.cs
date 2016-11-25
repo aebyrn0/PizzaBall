@@ -1,10 +1,7 @@
-﻿using CsvHelper;
-using CsvHelper.Configuration;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 
 namespace PizzaBall.Models.GameClasses
 {
@@ -26,12 +23,14 @@ namespace PizzaBall.Models.GameClasses
 
     public class PointCardDeck
     {
-        public List<PointCard> Deck { get; set; }
+        public List<PointCard> PointCards { get; set; }
+        public List<PointCard> ScoutCards { get; set; }
 
         public void InitializeDeck(string csvFilePath)
         {
             var cardData = new List<ReadPointDeckCSV>();
-            Deck = new List<PointCard>();
+            PointCards = new List<PointCard>();
+            ScoutCards = new List<PointCard>();
 
             using (TextReader reader = File.OpenText(csvFilePath))
             {
@@ -57,53 +56,82 @@ namespace PizzaBall.Models.GameClasses
                 }
             }
 
-
-            foreach(var data in cardData)
+            foreach (var data in cardData)
             {
-                for (int ct=1; ct <= int.Parse(data.Quantity); ct++)
+                var id = 1;
+                for (int ct = 1; ct <= int.Parse(data.Quantity); ct++)
                 {
-                    CardUseFreq freq = 0;
-
-                    if (data.Action == "clockwise-rotation.png")
-                        freq = CardUseFreq.OncePerTurn;
-                    if (data.Action == "sunrise.png")
-                        freq = CardUseFreq.OncePerRound;
-                    else if (data.Action == "back-forth.png")
-                        freq = CardUseFreq.Anytime;
-
-                    Deck.Add(new PointCard
+                    if (data.Name.Trim().ToLower() == "scout")
                     {
-                        Name = data.Name,
-                        Coal = int.Parse(data.Coal),
-                        Food = int.Parse(data.Food),
-                        Gold = int.Parse(data.Gold),
-                        Stone = int.Parse(data.Stone),
-                        Wood = int.Parse(data.Wood),
-                        Description = data.Rule,
-                        Image = data.Image,
-                        IsScoutCard = (data.Name.Trim().ToLower() == "scout"),
-                        Frequency = freq,
-                        PointValue = int.Parse(data.Points)
-                    });
+                        ScoutCards.Add(CreateCardFromData(id, data, true));
+                    }
+                    else
+                    {
+                        PointCards.Add(CreateCardFromData(id, data));
+                    }
+
+                    id++;
                 }
             }
+        }
 
-            var i = Deck;
+        private PointCard CreateCardFromData(int id, ReadPointDeckCSV data, bool isScout = false)
+        {
+            CardUseFreq freq = 0;
+
+            if (data.Action == "clockwise-rotation.png")
+                freq = CardUseFreq.OncePerTurn;
+            if (data.Action == "sunrise.png")
+                freq = CardUseFreq.OncePerRound;
+            else if (data.Action == "back-forth.png")
+                freq = CardUseFreq.Anytime;
+
+            return
+                new PointCard
+                {
+                    CardId = id,
+                    Name = data.Name,
+                    Coal = int.Parse(data.Coal),
+                    Food = int.Parse(data.Food),
+                    Gold = int.Parse(data.Gold),
+                    Stone = int.Parse(data.Stone),
+                    Wood = int.Parse(data.Wood),
+                    Description = data.Rule,
+                    Image = data.Image,
+                    IsScoutCard = isScout,
+                    Frequency = freq,
+                    PointValue = int.Parse(data.Points),
+                    PlayerOwned = false,
+                    Usable = (freq == CardUseFreq.Anytime || isScout)
+                };
         }
 
         public void DealScoutCard(Player p)
         {
-            var drawCard = Deck.Where(m => m.IsScoutCard == true).FirstOrDefault();
-            Deck.Remove(drawCard);
-            p.PointCards.Add(drawCard);
+            //All scout cards are the same so don't need to randomize
+            var drawnCard = ScoutCards.FirstOrDefault();
+
+            if (drawnCard != null)
+                ScoutCards.Remove(drawnCard);
+
+            drawnCard.PlayerOwned = true;
+
+            p.PointCards.Add(drawnCard);
         }
 
-        public PointCard DealNonScoutCard()
+        public PointCard DealPointCard()
         {
-            var drawCard = Deck.Where(m => m.IsScoutCard == false).FirstOrDefault();
-            Deck.Remove(drawCard);
+            var drawnCard = new PointCard();
+            Random r = new Random();
+            int rInt = r.Next(1, PointCards.Count);
 
-            return drawCard;
+            drawnCard = PointCards[rInt];
+            PointCards.RemoveAt(rInt);
+
+            //Starting hands don't seem very random without this
+            System.Threading.Thread.Sleep(10);
+
+            return drawnCard;
         }
     }
 

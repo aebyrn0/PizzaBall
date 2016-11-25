@@ -31,4 +31,15 @@
         &nbsp;
         @Model.Description</b>
     </div>
+    <div style="text-align: center;">
+        @if (Model.PlayerOwned == false)
+        {
+            <input type="button" data-cardId="@Model.CardId" value="Buy" class="btn-warning buyPointCard" />
+        }
+        else if (Model.Usable && Model.Used == false)
+        {
+            <input type="text" id="useCardQuantity" data-cardId="@Model.CardId" value="1" />
+            <input type="button" data-cardId="@Model.CardId" value="Use" class="btn-warning usePointCard" />
+        }
+    </div>
 </div>

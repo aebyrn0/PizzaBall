@@ -17,6 +17,7 @@ namespace PizzaBall.Models.GameClasses
         public List<PointCard> PointCardsForSale { get; set; }
         public const int STARTING_PLAYER_PUZZLE_CARDS = 7;
         private int STARTING_POINT_CARDS_FOR_SALE = 8;
+        public string Message { get; set; }
 
         public void InitializeGame(int numOfPlayers, string csvFilePath)
         {
@@ -57,7 +58,7 @@ namespace PizzaBall.Models.GameClasses
         {
             for (int i = 1; i <= STARTING_POINT_CARDS_FOR_SALE; i++)
             {
-                PointCardsForSale.Add(PointDeck.DealNonScoutCard());
+                PointCardsForSale.Add(PointDeck.DealPointCard());
             }
         }
 
