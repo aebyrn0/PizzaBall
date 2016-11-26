@@ -92,7 +92,7 @@ namespace PizzaBall.Models.GameClasses
                 throw new Exception(string.Format("Card of cardId: {0} not found.", cardId));
             }
 
-            GameGrid.FillSquareWithCard(x, y, cardToPlay);
+            GameGrid.FillSquareWithCard(x, y, cardToPlay, currentPlayer);
             currentPlayer.Hand.Remove(cardToPlay);
         }
 

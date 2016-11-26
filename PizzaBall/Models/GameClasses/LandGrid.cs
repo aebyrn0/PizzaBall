@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace PizzaBall.Models.GameClasses
 {
@@ -30,50 +31,29 @@ namespace PizzaBall.Models.GameClasses
             }
         }
 
-        public void FillSquareWithCard(int x, int y, LandCard card)
+        public void FillSquareWithCard(int x, int y, LandCard card, Player p)
         {
-            if (FirstPlay)
-            {
-                for (int i = 0; i < BOARD_HEIGHT; i++)
-                {
-                    for (int j = 0; j < BOARD_WIDTH; j++)
-                    {
-                        BoardRows[i][j].ValidSquare = false;
-                    }
-                }
+            CheckIfFirstPlay(x, y);
 
-                HighestX = LowestX = x;
-                HighestY = LowestY = y;
-
-                FirstPlay = false;
-            }
-
-            if (HighestX < x)
-                HighestX = x;
-
-            if (HighestY < y)
-                HighestY = y;
-
-            if (LowestX > x)
-                LowestX = x;
-
-            if (LowestY > y)
-                LowestY = y;
+            SetHighestLowest(x, y);
 
             BoardRows[x][y].CardInfo = card;
+            AwardResourcesForPlayedCard(x, y, card, p);
 
-            if ((x+1 < BOARD_HEIGHT) && (x+1 - LowestX < 4))
-                BoardRows[x + 1][y].ValidSquare = true;
+            SetSquaresNearPlayAsValid(x, y);
 
-            if ((x - 1 >= 0) && (HighestX - (x-1) < 4))
-                BoardRows[x - 1][y].ValidSquare = true;
+            PreventGridLargerThan4x4();
+        }
 
-            if ((y + 1 < BOARD_WIDTH) && (y + 1 - LowestY < 4))
-                BoardRows[x][y + 1].ValidSquare = true;
+        private void AwardResourcesForPlayedCard(int x, int y, LandCard card, Player p)
+        {
+            var possiblePoints = 0;
 
-            if ((y - 1 >= 0) && (HighestY - (y - 1) < 4))
-                BoardRows[x][y - 1].ValidSquare = true;
 
+        }
+
+        private void PreventGridLargerThan4x4()
+        {
             if ((HighestX - LowestX) == 3)
             {
                 if (HighestX + 1 <= BOARD_HEIGHT)
@@ -85,7 +65,7 @@ namespace PizzaBall.Models.GameClasses
                 if (LowestX - 1 <= 0)
                 {
                     for (int i = 0; i < BOARD_WIDTH; i++)
-                        BoardRows[LowestX -1][i].ValidSquare = false;
+                        BoardRows[LowestX - 1][i].ValidSquare = false;
                 }
             }
 
@@ -102,6 +82,55 @@ namespace PizzaBall.Models.GameClasses
                     for (int i = 0; i < BOARD_HEIGHT; i++)
                         BoardRows[i][LowestY - 1].ValidSquare = false;
                 }
+            }
+        }
+
+        private void SetSquaresNearPlayAsValid(int x, int y)
+        {
+            if ((x + 1 < BOARD_HEIGHT) && (x + 1 - LowestX < 4))
+                BoardRows[x + 1][y].ValidSquare = true;
+
+            if ((x - 1 >= 0) && (HighestX - (x - 1) < 4))
+                BoardRows[x - 1][y].ValidSquare = true;
+
+            if ((y + 1 < BOARD_WIDTH) && (y + 1 - LowestY < 4))
+                BoardRows[x][y + 1].ValidSquare = true;
+
+            if ((y - 1 >= 0) && (HighestY - (y - 1) < 4))
+                BoardRows[x][y - 1].ValidSquare = true;
+        }
+
+        private void SetHighestLowest(int x, int y)
+        {
+            if (HighestX < x)
+                HighestX = x;
+
+            if (HighestY < y)
+                HighestY = y;
+
+            if (LowestX > x)
+                LowestX = x;
+
+            if (LowestY > y)
+                LowestY = y;
+        }
+
+        private void CheckIfFirstPlay(int x, int y)
+        {
+            if (FirstPlay)
+            {
+                for (int i = 0; i < BOARD_HEIGHT; i++)
+                {
+                    for (int j = 0; j < BOARD_WIDTH; j++)
+                    {
+                        BoardRows[i][j].ValidSquare = false;
+                    }
+                }
+
+                HighestX = LowestX = x;
+                HighestY = LowestY = y;
+
+                FirstPlay = false;
             }
         }
     }
