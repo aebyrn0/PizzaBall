@@ -68,11 +68,41 @@ namespace PizzaBall.Models.GameClasses
             if ((x - 1 >= 0) && (HighestX - (x-1) < 4))
                 BoardRows[x - 1][y].ValidSquare = true;
 
-            if ((y + 1 < BOARD_HEIGHT) && (y + 1 - LowestY < 4))
+            if ((y + 1 < BOARD_WIDTH) && (y + 1 - LowestY < 4))
                 BoardRows[x][y + 1].ValidSquare = true;
 
             if ((y - 1 >= 0) && (HighestY - (y - 1) < 4))
                 BoardRows[x][y - 1].ValidSquare = true;
+
+            if ((HighestX - LowestX) == 3)
+            {
+                if (HighestX + 1 <= BOARD_HEIGHT)
+                {
+                    for (int i = 0; i < BOARD_WIDTH; i++)
+                        BoardRows[HighestX + 1][i].ValidSquare = false;
+                }
+
+                if (LowestX - 1 <= 0)
+                {
+                    for (int i = 0; i < BOARD_WIDTH; i++)
+                        BoardRows[LowestX -1][i].ValidSquare = false;
+                }
+            }
+
+            if ((HighestY - LowestY) == 3)
+            {
+                if (HighestY + 1 <= BOARD_WIDTH)
+                {
+                    for (int i = 0; i < BOARD_HEIGHT; i++)
+                        BoardRows[i][HighestY + 1].ValidSquare = false;
+                }
+
+                if (LowestY - 1 <= 0)
+                {
+                    for (int i = 0; i < BOARD_HEIGHT; i++)
+                        BoardRows[i][LowestY - 1].ValidSquare = false;
+                }
+            }
         }
     }
 
